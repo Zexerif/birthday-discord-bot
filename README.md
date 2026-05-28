@@ -1,15 +1,6 @@
 # 🎉 Discord Birthday Announcement Bot
 
-A Node.js Discord bot that lets server members register their birthdays using native Discord forms (Modals), displays countdowns for upcoming birthdays, and posts beautiful, automatic announcements when their special day arrives!
-
-## ✨ Features
-- **Native Forms:** `/birthday set` opens a popup modal directly inside Discord to input Birth Month, Day, and optional Birth Year.
-- **Validations:** Automatically verifies dates (handles leap years, matching days per month, and prevents invalid input).
-- **Upcoming List:** `/birthday list` shows all registered birthdays sorted chronologically by countdown.
-- **Announcement Channel:** Admins can configure the announcement channel with `/birthday channel`.
-- **Customized Greetings:** Selects from a range of festive, random greeting templates and calculates the user's age if a year is provided.
-- **Test Command:** Admins can test the announcement using `/birthday test` or simulate a specific date.
-- **File-based Storage:** Stores data in a simple local JSON database—no complex setup or binary compiling required.
+A Node.js Discord clanker that lets server members register their birthdays using native Discord forms (Modals), displays countdowns for upcoming birthdays, and posts beautiful, automatic announcements when their special day arrives!
 
 ---
 
