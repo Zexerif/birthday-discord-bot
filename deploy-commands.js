@@ -1,0 +1,94 @@
+require('dotenv').config();
+const { REST, Routes, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+
+const commands = [
+  new SlashCommandBuilder()
+    .setName('birthday')
+    .setDescription('Manage birthday registry and configuration.')
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('set')
+        .setDescription('Register or update your birthday using a popup form.')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('remove')
+        .setDescription('Remove your birthday from the registry.')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('list')
+        .setDescription('List all registered birthdays.')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('channel')
+        .setDescription('Set the channel where birthday announcements will be posted.')
+        .addChannelOption(option =>
+          option
+            .setName('channel')
+            .setDescription('The text channel for birthday announcements')
+            .setRequired(true)
+        )
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('test')
+        .setDescription('Force the bot to check and announce birthdays (Admin only).')
+        .addIntegerOption(option =>
+          option
+            .setName('month')
+            .setDescription('Optional month (1-12) to test a specific date')
+            .setRequired(false)
+            .setMinValue(1)
+            .setMaxValue(12)
+        )
+        .addIntegerOption(option =>
+          option
+            .setName('day')
+            .setDescription('Optional day (1-31) to test a specific date')
+            .setRequired(false)
+            .setMinValue(1)
+            .setMaxValue(31)
+        )
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+    )
+].map(command => command.toJSON());
+
+const token = process.env.DISCORD_TOKEN;
+const clientId = process.env.CLIENT_ID;
+const guildId = process.env.GUILD_ID;
+
+if (!token || !clientId) {
+  console.error('Error: DISCORD_TOKEN and CLIENT_ID must be specified in the .env file.');
+  process.exit(1);
+}
+
+const rest = new REST({ version: '10' }).setToken(token);
+
+(async () => {
+  try {
+    console.log(`Started refreshing ${commands.length} application (/) commands.`);
+
+    if (guildId) {
+      // Guild-specific registration (instant update, perfect for testing/development)
+      console.log(`Registering commands to Guild: ${guildId}`);
+      await rest.put(
+        Routes.applicationGuildCommands(clientId, guildId),
+        { body: commands }
+      );
+      console.log('Successfully registered application commands locally in test guild!');
+    } else {
+      // Global registration (can take up to an hour to propagate)
+      console.log('Registering commands globally (may take up to 1 hour to propagate across Discord)');
+      await rest.put(
+        Routes.applicationCommands(clientId),
+        { body: commands }
+      );
+      console.log('Successfully registered application commands globally!');
+    }
+  } catch (error) {
+    console.error('Failed to deploy commands:', error);
+  }
+})();

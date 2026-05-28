@@ -1,0 +1,15 @@
+{
+  "name": "discord-birthday-bot",
+  "version": "1.0.0",
+  "description": "A Discord bot that registers member birthdays and announces them on the day.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "register": "node deploy-commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3"
+  }
+}
