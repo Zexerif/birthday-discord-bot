@@ -163,6 +163,15 @@ module.exports = {
     }
 
     else if (subcommand === 'channel') {
+      // Check admin permission
+      if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
+        const embed = new EmbedBuilder()
+          .setColor('#FA5252')
+          .setTitle('❌ Access Denied')
+          .setDescription('You need the **Manage Channels** permission to configure the announcement channel.');
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+      }
+
       const channel = interaction.options.getChannel('channel');
       
       // Ensure it is a text channel
@@ -185,6 +194,15 @@ module.exports = {
     }
 
     else if (subcommand === 'test') {
+      // Check admin permission
+      if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
+        const embed = new EmbedBuilder()
+          .setColor('#FA5252')
+          .setTitle('❌ Access Denied')
+          .setDescription('You need the **Manage Channels** permission to run birthday tests.');
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+      }
+
       const monthOpt = interaction.options.getInteger('month');
       const dayOpt = interaction.options.getInteger('day');
 

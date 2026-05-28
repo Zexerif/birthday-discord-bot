@@ -30,7 +30,6 @@ const commands = [
             .setDescription('The text channel for birthday announcements')
             .setRequired(true)
         )
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     )
     .addSubcommand(subcommand =>
       subcommand
@@ -52,7 +51,6 @@ const commands = [
             .setMinValue(1)
             .setMaxValue(31)
         )
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     )
 ].map(command => command.toJSON());
 
