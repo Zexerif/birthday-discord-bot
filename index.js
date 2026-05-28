@@ -3,6 +3,7 @@ const { Client, GatewayIntentBits, Events } = require('discord.js');
 const birthdayCommand = require('./commands/birthday');
 const { deployCommands } = require('./deploy-commands');
 const { startScheduler } = require('./scheduler');
+const db = require('./database');
 
 // Create Discord Client
 const client = new Client({
@@ -65,6 +66,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
       }
     }
+  }
+});
+
+// Event: Guild Member Remove (User leaves server)
+client.on(Events.GuildMemberRemove, (member) => {
+  const removed = db.removeBirthday(member.id);
+  if (removed) {
+    console.log(`[Database] Automatically removed birthday registry for leaving member: ${member.user.tag} (${member.id})`);
   }
 });
 

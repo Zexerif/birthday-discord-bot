@@ -38,11 +38,12 @@ function writeDB(data) {
 }
 
 // Save/Update birthday for a user
-function saveBirthday(userId, username, month, day, year = null) {
+function saveBirthday(userId, username, month, day, year = null, name = null) {
   const data = readDB();
   data.birthdays[userId] = {
     userId,
     username,
+    name: name || null,
     month: parseInt(month, 10),
     day: parseInt(day, 10),
     year: year ? parseInt(year, 10) : null,

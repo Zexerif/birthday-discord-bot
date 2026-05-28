@@ -67,6 +67,8 @@ async function announceBirthdays(client, forcedDate = null) {
       // Try to fetch user from the client to get the latest avatar/details
       const user = await client.users.fetch(bday.userId);
       
+      const userDisplayName = bday.name ? `<@${bday.userId}> (${bday.name})` : `<@${bday.userId}>`;
+
       // Calculate age if year is registered
       let ageText = '';
       let isMilestone = false;
@@ -81,10 +83,10 @@ async function announceBirthdays(client, forcedDate = null) {
 
       // Predefined list of beautiful, warm, birthday greeting templates to keep announcements fresh
       const templates = [
-        `Wishing the absolute best to <@${bday.userId}>${ageText}! Hope your day is filled with joy, laughter, and lots of cake! 🎂✨`,
-        `Hip, hip, hooray! 🎉 Let's celebrate <@${bday.userId}>${ageText} today! May this new chapter bring you happiness and success. 🎈💖`,
-        `Sending warmest birthday wishes to <@${bday.userId}>${ageText}! May all your dreams and wishes come true. Have a fantastic day! 🌟🥳`,
-        `It's a special day! 🎁 Join us in wishing <@${bday.userId}>${ageText} a wonderful Happy Birthday! Have an amazing celebration! 🍰🎊`
+        `Wishing the absolute best to ${userDisplayName}${ageText}! Hope your day is filled with joy, laughter, and lots of cake! 🎂✨`,
+        `Hip, hip, hooray! 🎉 Let's celebrate ${userDisplayName}${ageText} today! May this new chapter bring you happiness and success. 🎈💖`,
+        `Sending warmest birthday wishes to ${userDisplayName}${ageText}! May all your dreams and wishes come true. Have a fantastic day! 🌟🥳`,
+        `It's a special day! 🎁 Join us in wishing ${userDisplayName} a wonderful Happy Birthday!${ageText} Have an amazing celebration! 🍰🎊`
       ];
 
       // Pick a template based on the user's ID to keep it deterministic but varied
@@ -93,7 +95,7 @@ async function announceBirthdays(client, forcedDate = null) {
 
       // Add special funny milestone text for ages 20, 30, 40, 50, etc.
       if (isMilestone) {
-        greeting = `🎉 **Oh wow, <@${bday.userId}> is turning ${age} today!** Officially a certified **old fart**! 👴💨 Hope your joints don't creak too much while blowing out the candles! 🎂🍰`;
+        greeting = `🎉 **Oh wow, ${userDisplayName} is turning ${age} today!** Officially a certified **old fart**! 👴💨 Hope your joints don't creak too much while blowing out the candles! 🎂🍰`;
       }
 
       // Create a gorgeous Embed

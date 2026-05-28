@@ -65,6 +65,24 @@ const commands = [
             .setMinValue(1900)
             .setMaxValue(new Date().getFullYear())
         )
+        .addStringOption(option =>
+          option
+            .setName('name')
+            .setDescription('Preferred or real name of the member')
+            .setRequired(false)
+            .setMaxLength(100)
+        )
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('remove-user')
+        .setDescription("Remove another member's birthday (Admin only).")
+        .addUserOption(option =>
+          option
+            .setName('user')
+            .setDescription('The member whose birthday you want to remove')
+            .setRequired(true)
+        )
     )
     .addSubcommand(subcommand =>
       subcommand

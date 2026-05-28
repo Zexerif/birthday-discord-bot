@@ -92,12 +92,22 @@ module.exports = {
         .setMaxLength(4)
         .setPlaceholder('e.g., 2001');
 
+      const nameInput = new TextInputBuilder()
+        .setCustomId('birthday_name')
+        .setLabel('Preferred or Real Name (Optional)')
+        .setStyle(TextInputStyle.Short)
+        .setRequired(false)
+        .setMinLength(1)
+        .setMaxLength(100)
+        .setPlaceholder('e.g., Quinn');
+
       // Add to action rows (each input must be in its own row)
       const firstRow = new ActionRowBuilder().addComponents(monthInput);
       const secondRow = new ActionRowBuilder().addComponents(dayInput);
       const thirdRow = new ActionRowBuilder().addComponents(yearInput);
+      const fourthRow = new ActionRowBuilder().addComponents(nameInput);
 
-      modal.addComponents(firstRow, secondRow, thirdRow);
+      modal.addComponents(firstRow, secondRow, thirdRow, fourthRow);
 
       // Show the modal
       await interaction.showModal(modal);
@@ -207,6 +217,7 @@ module.exports = {
       const month = interaction.options.getInteger('month');
       const day = interaction.options.getInteger('day');
       const year = interaction.options.getInteger('year');
+      const name = interaction.options.getString('name');
 
       // Validate date combination
       if (!isValidDate(month, day, year)) {
@@ -218,15 +229,41 @@ module.exports = {
       }
 
       // Save to database
-      db.saveBirthday(targetUser.id, targetUser.username, month, day, year);
+      db.saveBirthday(targetUser.id, targetUser.username, month, day, year, name);
 
       const dateStr = `${getMonthName(month)} ${day}`;
       const yearStr = year ? `, ${year}` : '';
+      const nameStr = name ? ` (${name})` : '';
 
       const embed = new EmbedBuilder()
         .setColor('#51CF66') // Success green
         .setTitle('🎉 Birthday Registered')
-        .setDescription(`Successfully registered the birthday for <@${targetUser.id}> as **${dateStr}${yearStr}**.`);
+        .setDescription(`Successfully registered the birthday for <@${targetUser.id}> as **${dateStr}${yearStr}**${nameStr}.`);
+
+      await interaction.reply({ embeds: [embed] });
+    }
+
+    else if (subcommand === 'remove-user') {
+      // Check admin permission
+      if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
+        const embed = new EmbedBuilder()
+          .setColor('#FA5252')
+          .setTitle('❌ Access Denied')
+          .setDescription('You need the **Manage Channels** permission to remove another member\'s birthday.');
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+      }
+
+      const targetUser = interaction.options.getUser('user');
+      const removed = db.removeBirthday(targetUser.id);
+
+      const embed = new EmbedBuilder()
+        .setColor(removed ? '#FFA8A8' : '#CED4DA')
+        .setTitle(removed ? '🗑️ Birthday Removed' : 'ℹ️ No Birthday Registered')
+        .setDescription(
+          removed 
+            ? `Successfully removed the birthday registry for <@${targetUser.id}>.`
+            : `<@${targetUser.id}> does not have a birthday registered in this server.`
+        );
 
       await interaction.reply({ embeds: [embed] });
     }
@@ -275,10 +312,12 @@ module.exports = {
     const monthRaw = interaction.fields.getTextInputValue('birthday_month').trim();
     const dayRaw = interaction.fields.getTextInputValue('birthday_day').trim();
     const yearRaw = interaction.fields.getTextInputValue('birthday_year').trim();
+    const nameRaw = interaction.fields.getTextInputValue('birthday_name').trim();
 
     const month = parseInt(monthRaw, 10);
     const day = parseInt(dayRaw, 10);
     const year = yearRaw ? parseInt(yearRaw, 10) : null;
+    const name = nameRaw || null;
 
     // Validate inputs
     if (isNaN(month) || isNaN(day)) {
@@ -306,10 +345,11 @@ module.exports = {
     }
 
     // Save to database
-    db.saveBirthday(interaction.user.id, interaction.user.username, month, day, year);
+    db.saveBirthday(interaction.user.id, interaction.user.username, month, day, year, name);
 
     const dateStr = `${getMonthName(month)} ${day}`;
     const yearStr = year ? `, ${year}` : '';
+    const nameStr = name ? ` (${name})` : '';
     const daysRemaining = getDaysUntilBirthday(month, day);
     const countdown = daysRemaining === 0 
       ? "today! 🥳" 
@@ -321,7 +361,7 @@ module.exports = {
       .setColor('#FCC419') // Warm gold/yellow
       .setTitle('🎉 Birthday Registered!')
       .setDescription(
-        `Success! We've registered your birthday as **${dateStr}${yearStr}**.\n\n` +
+        `Success! We've registered your birthday as **${dateStr}${yearStr}**${nameStr}.\n\n` +
         `Your next birthday is ${countdown} We'll post a celebratory announcement in the server when the day arrives! 🎂`
       )
       .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
