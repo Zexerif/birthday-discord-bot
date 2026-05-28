@@ -56,39 +56,44 @@ const commands = [
     )
 ].map(command => command.toJSON());
 
-const token = process.env.DISCORD_TOKEN;
-const clientId = process.env.CLIENT_ID;
-const guildId = process.env.GUILD_ID;
+async function deployCommands() {
+  const token = process.env.DISCORD_TOKEN;
+  const clientId = process.env.CLIENT_ID;
+  const guildId = process.env.GUILD_ID;
 
-if (!token || !clientId) {
-  console.error('Error: DISCORD_TOKEN and CLIENT_ID must be specified in the .env file.');
-  process.exit(1);
-}
+  if (!token || !clientId) {
+    console.error('[Deploy] Error: DISCORD_TOKEN and CLIENT_ID must be specified.');
+    return;
+  }
 
-const rest = new REST({ version: '10' }).setToken(token);
+  const rest = new REST({ version: '10' }).setToken(token);
 
-(async () => {
   try {
-    console.log(`Started refreshing ${commands.length} application (/) commands.`);
+    console.log(`[Deploy] Started refreshing ${commands.length} application (/) commands.`);
 
     if (guildId) {
-      // Guild-specific registration (instant update, perfect for testing/development)
-      console.log(`Registering commands to Guild: ${guildId}`);
+      console.log(`[Deploy] Registering commands to Guild: ${guildId}`);
       await rest.put(
         Routes.applicationGuildCommands(clientId, guildId),
         { body: commands }
       );
-      console.log('Successfully registered application commands locally in test guild!');
+      console.log('[Deploy] Successfully registered application commands locally in test guild!');
     } else {
-      // Global registration (can take up to an hour to propagate)
-      console.log('Registering commands globally (may take up to 1 hour to propagate across Discord)');
+      console.log('[Deploy] Registering commands globally (may take up to 1 hour to propagate across Discord)...');
       await rest.put(
         Routes.applicationCommands(clientId),
         { body: commands }
       );
-      console.log('Successfully registered application commands globally!');
+      console.log('[Deploy] Successfully registered application commands globally!');
     }
   } catch (error) {
-    console.error('Failed to deploy commands:', error);
+    console.error('[Deploy] Failed to deploy commands:', error);
   }
-})();
+}
+
+module.exports = { deployCommands };
+
+if (require.main === module) {
+  deployCommands();
+}
+

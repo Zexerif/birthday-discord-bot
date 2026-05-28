@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits, Events } = require('discord.js');
 const birthdayCommand = require('./commands/birthday');
+const { deployCommands } = require('./deploy-commands');
 const { startScheduler } = require('./scheduler');
 
 // Create Discord Client
@@ -12,8 +13,11 @@ const client = new Client({
 });
 
 // Event: Client Ready
-client.once(Events.ClientReady, (c) => {
+client.once(Events.ClientReady, async (c) => {
   console.log(`🚀 Bot is online! Logged in as ${c.user.tag}`);
+  
+  // Automatically register/update slash commands on boot
+  await deployCommands();
   
   // Start the birthday check scheduler
   startScheduler(client);
