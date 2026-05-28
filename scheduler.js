@@ -69,9 +69,14 @@ async function announceBirthdays(client, forcedDate = null) {
       
       // Calculate age if year is registered
       let ageText = '';
+      let isMilestone = false;
+      let age = null;
       if (bday.year) {
-        const age = today.getFullYear() - bday.year;
+        age = today.getFullYear() - bday.year;
         ageText = ` celebrating turning **${age}**`;
+        if (age >= 20 && age % 10 === 0) {
+          isMilestone = true;
+        }
       }
 
       // Predefined list of beautiful, warm, birthday greeting templates to keep announcements fresh
@@ -84,7 +89,12 @@ async function announceBirthdays(client, forcedDate = null) {
 
       // Pick a template based on the user's ID to keep it deterministic but varied
       const templateIdx = parseInt(bday.userId.slice(-2) || '0', 10) % templates.length;
-      const greeting = templates[templateIdx];
+      let greeting = templates[templateIdx];
+
+      // Add special funny milestone text for ages 20, 30, 40, 50, etc.
+      if (isMilestone) {
+        greeting = `🎉 **Oh wow, <@${bday.userId}> is turning ${age} today!** Officially a certified **old fart**! 👴💨 Hope your joints don't creak too much while blowing out the candles! 🎂🍰`;
+      }
 
       // Create a gorgeous Embed
       const embed = new EmbedBuilder()

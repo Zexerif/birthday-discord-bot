@@ -33,6 +33,41 @@ const commands = [
     )
     .addSubcommand(subcommand =>
       subcommand
+        .setName('set-user')
+        .setDescription("Set another member's birthday (Admin only).")
+        .addUserOption(option =>
+          option
+            .setName('user')
+            .setDescription('The member whose birthday you want to set')
+            .setRequired(true)
+        )
+        .addIntegerOption(option =>
+          option
+            .setName('month')
+            .setDescription('Month (1-12)')
+            .setRequired(true)
+            .setMinValue(1)
+            .setMaxValue(12)
+        )
+        .addIntegerOption(option =>
+          option
+            .setName('day')
+            .setDescription('Day (1-31)')
+            .setRequired(true)
+            .setMinValue(1)
+            .setMaxValue(31)
+        )
+        .addIntegerOption(option =>
+          option
+            .setName('year')
+            .setDescription('Optional birth year (YYYY)')
+            .setRequired(false)
+            .setMinValue(1900)
+            .setMaxValue(new Date().getFullYear())
+        )
+    )
+    .addSubcommand(subcommand =>
+      subcommand
         .setName('test')
         .setDescription('Force the bot to check and announce birthdays (Admin only).')
         .addIntegerOption(option =>

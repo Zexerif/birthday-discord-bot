@@ -193,6 +193,44 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     }
 
+    else if (subcommand === 'set-user') {
+      // Check admin permission
+      if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
+        const embed = new EmbedBuilder()
+          .setColor('#FA5252')
+          .setTitle('❌ Access Denied')
+          .setDescription('You need the **Manage Channels** permission to set another member\'s birthday.');
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+      }
+
+      const targetUser = interaction.options.getUser('user');
+      const month = interaction.options.getInteger('month');
+      const day = interaction.options.getInteger('day');
+      const year = interaction.options.getInteger('year');
+
+      // Validate date combination
+      if (!isValidDate(month, day, year)) {
+        const embed = new EmbedBuilder()
+          .setColor('#FA5252')
+          .setTitle('❌ Invalid Date')
+          .setDescription(`The date **${month}/${day}${year ? '/' + year : ''}** does not exist. Please check your calendar.`);
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+      }
+
+      // Save to database
+      db.saveBirthday(targetUser.id, targetUser.username, month, day, year);
+
+      const dateStr = `${getMonthName(month)} ${day}`;
+      const yearStr = year ? `, ${year}` : '';
+
+      const embed = new EmbedBuilder()
+        .setColor('#51CF66') // Success green
+        .setTitle('🎉 Birthday Registered')
+        .setDescription(`Successfully registered the birthday for <@${targetUser.id}> as **${dateStr}${yearStr}**.`);
+
+      await interaction.reply({ embeds: [embed] });
+    }
+
     else if (subcommand === 'test') {
       // Check admin permission
       if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
