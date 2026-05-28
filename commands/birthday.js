@@ -50,7 +50,7 @@ function getDaysUntilBirthday(month, day) {
   }
 
   const diffTime = bdayThisYear - today;
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
 }
 
