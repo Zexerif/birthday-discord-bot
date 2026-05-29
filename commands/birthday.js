@@ -11,14 +11,17 @@ const { announceBirthdays, updatePresence } = require('../scheduler');
 
 // Helper to validate date
 function isValidDate(month, day, year = null) {
-  const checkYear = year ? parseInt(year, 10) : 2024; // Use leap year 2024 to validate month/day
+  const checkYear = year !== null ? parseInt(year, 10) : 2024; // Default to leap year 2024
   const m = parseInt(month, 10);
   const d = parseInt(day, 10);
 
-  if (isNaN(m) || isNaN(d)) return false;
+  if (isNaN(m) || isNaN(d) || isNaN(checkYear)) return false;
   if (m < 1 || m > 12 || d < 1 || d > 31) return false;
 
-  const date = new Date(checkYear, m - 1, d);
+  // Use setFullYear to correctly handle years < 100 AD and BCE (negative) years
+  // new Date(year, ...) misinterprets 0-99 as 1900-1999
+  const date = new Date(0);
+  date.setFullYear(checkYear, m - 1, d);
   return (
     date.getFullYear() === checkYear &&
     date.getMonth() === m - 1 &&
@@ -85,12 +88,12 @@ module.exports = {
 
       const yearInput = new TextInputBuilder()
         .setCustomId('birthday_year')
-        .setLabel('Birth Year (Optional, YYYY)')
+        .setLabel('Birth Year (Optional, negative = BCE)')
         .setStyle(TextInputStyle.Short)
         .setRequired(false)
-        .setMinLength(4)
-        .setMaxLength(4)
-        .setPlaceholder('e.g., 2001');
+        .setMinLength(1)
+        .setMaxLength(5)
+        .setPlaceholder('e.g., 2001 or -400');
 
       const nameInput = new TextInputBuilder()
         .setCustomId('birthday_name')
@@ -349,11 +352,11 @@ module.exports = {
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 
-    if (yearRaw && (isNaN(year) || year < 1900 || year > new Date().getFullYear())) {
+    if (yearRaw && (isNaN(year) || year < -9999 || year > new Date().getFullYear())) {
       const embed = new EmbedBuilder()
         .setColor('#FA5252')
         .setTitle('❌ Registration Failed')
-        .setDescription(`Please enter a valid year between 1900 and ${new Date().getFullYear()}.`);
+        .setDescription(`Please enter a valid year between **-9999** (BCE) and **${new Date().getFullYear()}**. Use a negative number for BCE years (e.g., -400 for 400 BCE).`);
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 

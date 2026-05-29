@@ -74,11 +74,14 @@ async function announceBirthdays(client, forcedDate = null) {
       // Calculate age if year is registered
       let ageText = '';
       let isMilestone = false;
+      let isAncient = false;
       let age = null;
-      if (bday.year) {
-        age = today.getFullYear() - bday.year;
-        ageText = ` celebrating turning **${age}**`;
-        if (age >= 20 && age % 10 === 0) {
+      if (bday.year !== null && bday.year !== undefined) {
+        age = today.getFullYear() - parseInt(bday.year, 10);
+        ageText = ` celebrating turning **${age.toLocaleString()}**`;
+        if (age > 500) {
+          isAncient = true;
+        } else if (age >= 20 && age % 10 === 0) {
           isMilestone = true;
         }
       }
@@ -95,8 +98,12 @@ async function announceBirthdays(client, forcedDate = null) {
       const templateIdx = parseInt(bday.userId.slice(-2) || '0', 10) % templates.length;
       let greeting = templates[templateIdx];
 
+      // Special greeting for ancient people (500+ years old)
+      if (isAncient) {
+        const bceYear = parseInt(bday.year, 10) < 0 ? `${Math.abs(parseInt(bday.year, 10))} BCE` : bday.year;
+        greeting = `🏛️ **ALERT: ${userDisplayName} is turning ${age.toLocaleString()} years old today!** Born in ${bceYear}, they have witnessed the rise and fall of empires, survived countless plagues, and somehow still ended up in this Discord server. Please show some respect for our elders. 🦴⚰️`;
       // Add special funny milestone text for ages 20, 30, 40, 50, etc.
-      if (isMilestone) {
+      } else if (isMilestone) {
         greeting = `🎉 **Oh wow, ${userDisplayName} is turning ${age} today!** Officially a certified **old fart**! 👴💨 Hope your joints don't creak too much while blowing out the candles! 🎂🍰`;
       }
 

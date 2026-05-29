@@ -60,9 +60,9 @@ const commands = [
         .addIntegerOption(option =>
           option
             .setName('year')
-            .setDescription('Optional birth year (YYYY)')
+            .setDescription('Optional birth year (negative = BCE, e.g. -400 for 400 BCE)')
             .setRequired(false)
-            .setMinValue(1900)
+            .setMinValue(-9999)
             .setMaxValue(new Date().getFullYear())
         )
         .addStringOption(option =>
