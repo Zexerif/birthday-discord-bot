@@ -57,11 +57,10 @@ async function announceBirthdays(client, forcedDate = null) {
 
   if (celebratingToday.length === 0) {
     console.log(`[Scheduler] Checked birthdays for ${today.toDateString()}. No birthdays today.`);
-    return;
+    return 0;
   }
 
-  console.log(`[Scheduler] Found ${celebratingToday.length} birthday(s) today:`, celebratingToday.map(b => b.username).join(', '));
-
+  let successCount = 0;
   for (const bday of celebratingToday) {
     try {
       // Try to fetch user from the client to get the latest avatar/details
@@ -121,10 +120,12 @@ async function announceBirthdays(client, forcedDate = null) {
         embeds: [embed]
       });
 
+      successCount++;
     } catch (err) {
       console.error(`Failed to announce birthday for ${bday.username} (${bday.userId}):`, err);
     }
   }
+  return successCount;
 }
 
 // Convert month number to month name

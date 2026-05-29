@@ -284,6 +284,7 @@ module.exports = {
       await interaction.reply({ content: '⚙️ Checking for birthdays and running test announcement...', ephemeral: true });
 
       try {
+        let count = 0;
         if (monthOpt !== null && dayOpt !== null) {
           if (!isValidDate(monthOpt, dayOpt)) {
             return interaction.followUp({ content: '❌ Invalid month/day combination provided for testing.', ephemeral: true });
@@ -293,13 +294,24 @@ module.exports = {
           testDate.setMonth(monthOpt - 1);
           testDate.setDate(dayOpt);
           console.log(`[Test] Running test announcements for date: ${testDate.toDateString()}`);
-          await announceBirthdays(interaction.client, testDate);
+          count = await announceBirthdays(interaction.client, testDate);
         } else {
           // Check today's date
           console.log(`[Test] Running test announcements for today: ${new Date().toDateString()}`);
-          await announceBirthdays(interaction.client);
+          count = await announceBirthdays(interaction.client);
         }
-        await interaction.followUp({ content: '✅ Test birthday announcement routine finished.', ephemeral: true });
+
+        if (count === 0) {
+          await interaction.followUp({ 
+            content: 'ℹ️ Test completed! No birthdays are registered for that date, so no announcements were sent. Make sure you register a birthday for that date first (using `/birthday set` or `/birthday set-user`) or run the test for a date that has registered birthdays!', 
+            ephemeral: true 
+          });
+        } else {
+          await interaction.followUp({ 
+            content: `✅ Test completed! Successfully sent ${count} birthday announcement(s) to the configured channel.`, 
+            ephemeral: true 
+          });
+        }
       } catch (err) {
         console.error('Test announcement failed:', err);
         await interaction.followUp({ content: `❌ Test run failed: ${err.message}`, ephemeral: true });
