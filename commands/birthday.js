@@ -321,10 +321,18 @@ module.exports = {
 
   // Modal submission handler
   async handleModalSubmit(interaction) {
-    const monthRaw = interaction.fields.getTextInputValue('birthday_month').trim();
-    const dayRaw = interaction.fields.getTextInputValue('birthday_day').trim();
-    const yearRaw = interaction.fields.getTextInputValue('birthday_year').trim();
-    const nameRaw = interaction.fields.getTextInputValue('birthday_name').trim();
+    const getSafeValue = (id) => {
+      try {
+        return (interaction.fields.getTextInputValue(id) || '').trim();
+      } catch {
+        return '';
+      }
+    };
+
+    const monthRaw = getSafeValue('birthday_month');
+    const dayRaw = getSafeValue('birthday_day');
+    const yearRaw = getSafeValue('birthday_year');
+    const nameRaw = getSafeValue('birthday_name');
 
     const month = parseInt(monthRaw, 10);
     const day = parseInt(dayRaw, 10);
