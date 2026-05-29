@@ -2,6 +2,10 @@
 
 A Node.js Discord clanker that lets server members register their birthdays using native Discord forms (Modals), displays countdowns for upcoming birthdays, and posts beautiful, automatic announcements when their special day arrives!
 
+
+AI Was used in the creation of this project.
+
+
 ---
 
 ## 🛠️ Setup & Installation
