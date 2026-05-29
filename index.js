@@ -2,7 +2,7 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, Events } = require('discord.js');
 const birthdayCommand = require('./commands/birthday');
 const { deployCommands } = require('./deploy-commands');
-const { startScheduler } = require('./scheduler');
+const { startScheduler, updatePresence } = require('./scheduler');
 const db = require('./database');
 
 // Create Discord Client
@@ -74,6 +74,7 @@ client.on(Events.GuildMemberRemove, (member) => {
   const removed = db.removeBirthday(member.id);
   if (removed) {
     console.log(`[Database] Automatically removed birthday registry for leaving member: ${member.user.tag} (${member.id})`);
+    updatePresence(member.client);
   }
 });
 

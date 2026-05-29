@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, ActivityType } = require('discord.js');
 const db = require('./database');
 
 // Checks if today is the user's birthday
@@ -137,13 +137,56 @@ function getMonthName(monthNumber) {
   return months[monthNumber - 1] || 'Unknown';
 }
 
+// Update bot presence state
+function updatePresence(client) {
+  try {
+    const today = new Date();
+    const birthdays = db.getBirthdays();
+    const celebratingToday = birthdays.filter(bday => isBirthdayToday(bday, today));
+
+    if (celebratingToday.length === 0) {
+      client.user.setPresence({
+        activities: [{
+          name: 'customstatus',
+          state: 'Watching for birthdays 🎂',
+          type: ActivityType.Custom
+        }]
+      });
+    } else if (celebratingToday.length === 1) {
+      const bday = celebratingToday[0];
+      const displayName = bday.name || bday.username;
+      client.user.setPresence({
+        activities: [{
+          name: 'customstatus',
+          state: `🎉 Celebrating ${displayName}'s birthday! 🎂`,
+          type: ActivityType.Custom
+        }]
+      });
+    } else {
+      client.user.setPresence({
+        activities: [{
+          name: 'customstatus',
+          state: `🎉 Celebrating ${celebratingToday.length} birthdays today! 🎂`,
+          type: ActivityType.Custom
+        }]
+      });
+    }
+  } catch (err) {
+    console.error('Failed to update bot activity presence:', err);
+  }
+}
+
 // Initialize Scheduler
 function startScheduler(client) {
+  // Update presence immediately on startup
+  updatePresence(client);
+
   // Run everyday at 9:00 AM server local time
   // Cron format: minute hour day-of-month month day-of-week
   cron.schedule('0 9 * * *', () => {
     console.log('[Scheduler] Running scheduled birthday checks...');
     announceBirthdays(client);
+    updatePresence(client);
   });
   
   console.log('[Scheduler] Birthday check scheduler loaded. Scheduled for 9:00 AM daily.');
@@ -151,5 +194,6 @@ function startScheduler(client) {
 
 module.exports = {
   startScheduler,
-  announceBirthdays
+  announceBirthdays,
+  updatePresence
 };

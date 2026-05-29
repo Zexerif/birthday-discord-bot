@@ -7,7 +7,7 @@ const {
   PermissionFlagsBits
 } = require('discord.js');
 const db = require('../database');
-const { announceBirthdays } = require('../scheduler');
+const { announceBirthdays, updatePresence } = require('../scheduler');
 
 // Helper to validate date
 function isValidDate(month, day, year = null) {
@@ -115,6 +115,7 @@ module.exports = {
 
     else if (subcommand === 'remove') {
       const removed = db.removeBirthday(interaction.user.id);
+      if (removed) updatePresence(interaction.client);
       
       const embed = new EmbedBuilder()
         .setColor(removed ? '#FFA8A8' : '#CED4DA')
@@ -230,6 +231,7 @@ module.exports = {
 
       // Save to database
       db.saveBirthday(targetUser.id, targetUser.username, month, day, year, name);
+      updatePresence(interaction.client);
 
       const dateStr = `${getMonthName(month)} ${day}`;
       const yearStr = year ? `, ${year}` : '';
@@ -255,6 +257,7 @@ module.exports = {
 
       const targetUser = interaction.options.getUser('user');
       const removed = db.removeBirthday(targetUser.id);
+      if (removed) updatePresence(interaction.client);
 
       const embed = new EmbedBuilder()
         .setColor(removed ? '#FFA8A8' : '#CED4DA')
@@ -366,6 +369,7 @@ module.exports = {
 
     // Save to database
     db.saveBirthday(interaction.user.id, interaction.user.username, month, day, year, name);
+    updatePresence(interaction.client);
 
     const dateStr = `${getMonthName(month)} ${day}`;
     const yearStr = year ? `, ${year}` : '';
