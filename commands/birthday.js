@@ -292,10 +292,8 @@ module.exports = {
           if (!isValidDate(monthOpt, dayOpt)) {
             return interaction.followUp({ content: '❌ Invalid month/day combination provided for testing.', ephemeral: true });
           }
-          // Simulate a specific date
-          const testDate = new Date();
-          testDate.setMonth(monthOpt - 1);
-          testDate.setDate(dayOpt);
+          // Simulate a specific date safely (avoids month overflow, e.g. May 31 -> Feb 31 -> March 3)
+          const testDate = new Date(new Date().getFullYear(), monthOpt - 1, dayOpt);
           console.log(`[Test] Running test announcements for date: ${testDate.toDateString()}`);
           count = await announceBirthdays(interaction.client, testDate);
         } else {

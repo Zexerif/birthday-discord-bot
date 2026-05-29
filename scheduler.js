@@ -6,14 +6,17 @@ const db = require('./database');
 function isBirthdayToday(bday, date) {
   const month = date.getMonth() + 1; // 1-indexed
   const day = date.getDate();
+  // Normalize to integers — data may be stored as strings in some cases
+  const bdayMonth = parseInt(bday.month, 10);
+  const bdayDay = parseInt(bday.day, 10);
 
   // Standard match
-  if (bday.month === month && bday.day === day) {
+  if (bdayMonth === month && bdayDay === day) {
     return true;
   }
 
   // Handle Feb 29 birthdays in non-leap years
-  if (bday.month === 2 && bday.day === 29 && month === 2 && day === 28) {
+  if (bdayMonth === 2 && bdayDay === 29 && month === 2 && day === 28) {
     const year = date.getFullYear();
     const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
     if (!isLeapYear) {
