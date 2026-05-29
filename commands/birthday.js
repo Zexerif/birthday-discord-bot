@@ -99,7 +99,7 @@ module.exports = {
         .setRequired(false)
         .setMinLength(1)
         .setMaxLength(100)
-        .setPlaceholder('e.g., Quinn');
+        .setPlaceholder('e.g., Glorbus');
 
       // Add to action rows (each input must be in its own row)
       const firstRow = new ActionRowBuilder().addComponents(monthInput);
