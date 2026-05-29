@@ -30,11 +30,7 @@ function readDB() {
 
 // Write database
 function writeDB(data) {
-  try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error writing to database file:', error);
-  }
+  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 // Save/Update birthday for a user
@@ -49,7 +45,8 @@ function saveBirthday(userId, username, month, day, year = null, name = null) {
     year: year ? parseInt(year, 10) : null,
     updatedAt: new Date().toISOString()
   };
-  writeDB(data);
+  writeDB(data); // Throws on failure — do not swallow
+  console.log(`[Database] Saved birthday for ${username} (${userId}): ${month}/${day}${year ? '/' + year : ''}`);
   return data.birthdays[userId];
 }
 
