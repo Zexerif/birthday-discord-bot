@@ -1,8 +1,8 @@
-const { 
-  ModalBuilder, 
-  TextInputBuilder, 
-  TextInputStyle, 
-  ActionRowBuilder, 
+const {
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ActionRowBuilder,
   EmbedBuilder,
   PermissionFlagsBits
 } = require('discord.js');
@@ -136,7 +136,7 @@ module.exports = {
           '- **`/birthday test`**: Execute a dry-run check for today\'s date to verify announcements.\n' +
           '- **`/birthday test [month] [day]`**: Simulate and test a specific date\'s birthday announcements.'
         )
-        .setFooter({ text: 'Made with ❤️ to celebrate your special days!' })
+        .setFooter({ text: 'Made with hatred' })
         .setTimestamp();
 
       await interaction.reply({ embeds: [embed], ephemeral: true });
@@ -145,12 +145,12 @@ module.exports = {
     else if (subcommand === 'remove') {
       const removed = db.removeBirthday(interaction.user.id);
       if (removed) updatePresence(interaction.client);
-      
+
       const embed = new EmbedBuilder()
         .setColor(removed ? '#FFA8A8' : '#CED4DA')
         .setTitle(removed ? '🗑️ Birthday Removed' : 'ℹ️ No Birthday Registered')
         .setDescription(
-          removed 
+          removed
             ? 'Your birthday has been successfully removed from the registry.'
             : "You don't have a birthday registered in this server."
         );
@@ -186,12 +186,12 @@ module.exports = {
       const listLines = sortedBirthdays.map((bday, index) => {
         const dateStr = `${getMonthName(bday.month)} ${bday.day}`;
         const yearStr = bday.year ? `, ${bday.year}` : '';
-        const countdown = bday.daysUntil === 0 
-          ? '**Today!** 🎉' 
-          : bday.daysUntil === 1 
-            ? 'tomorrow!' 
+        const countdown = bday.daysUntil === 0
+          ? '**Today!** 🎉'
+          : bday.daysUntil === 1
+            ? 'tomorrow!'
             : `in ${bday.daysUntil} days`;
-        
+
         return `**${index + 1}.** <@${bday.userId}> - **${dateStr}${yearStr}** (${countdown})`;
       });
 
@@ -213,7 +213,7 @@ module.exports = {
       }
 
       const channel = interaction.options.getChannel('channel');
-      
+
       // Ensure it is a text channel
       if (!channel.isTextBased()) {
         const embed = new EmbedBuilder()
@@ -292,7 +292,7 @@ module.exports = {
         .setColor(removed ? '#FFA8A8' : '#CED4DA')
         .setTitle(removed ? '🗑️ Birthday Removed' : 'ℹ️ No Birthday Registered')
         .setDescription(
-          removed 
+          removed
             ? `Successfully removed the birthday registry for <@${targetUser.id}>.`
             : `<@${targetUser.id}> does not have a birthday registered in this server.`
         );
@@ -332,14 +332,14 @@ module.exports = {
         }
 
         if (count === 0) {
-          await interaction.followUp({ 
-            content: 'ℹ️ Test completed! No birthdays are registered for that date, so no announcements were sent. Make sure you register a birthday for that date first (using `/birthday set` or `/birthday set-user`) or run the test for a date that has registered birthdays!', 
-            ephemeral: true 
+          await interaction.followUp({
+            content: 'ℹ️ Test completed! No birthdays are registered for that date, so no announcements were sent. Make sure you register a birthday for that date first (using `/birthday set` or `/birthday set-user`) or run the test for a date that has registered birthdays!',
+            ephemeral: true
           });
         } else {
-          await interaction.followUp({ 
-            content: `✅ Test completed! Successfully sent ${count} birthday announcement(s) to the configured channel.`, 
-            ephemeral: true 
+          await interaction.followUp({
+            content: `✅ Test completed! Successfully sent ${count} birthday announcement(s) to the configured channel.`,
+            ephemeral: true
           });
         }
       } catch (err) {
@@ -402,10 +402,10 @@ module.exports = {
     const yearStr = year ? `, ${year}` : '';
     const nameStr = name ? ` (${name})` : '';
     const daysRemaining = getDaysUntilBirthday(month, day);
-    const countdown = daysRemaining === 0 
-      ? "today! 🥳" 
-      : daysRemaining === 1 
-        ? "tomorrow!" 
+    const countdown = daysRemaining === 0
+      ? "today! 🥳"
+      : daysRemaining === 1
+        ? "tomorrow!"
         : `in ${daysRemaining} days.`;
 
     const embed = new EmbedBuilder()
