@@ -116,6 +116,32 @@ module.exports = {
       await interaction.showModal(modal);
     }
 
+    else if (subcommand === 'help') {
+      const embed = new EmbedBuilder()
+        .setColor('#FCC419') // Warm gold
+        .setTitle('🎂 Birthday Bot Help & Guide')
+        .setDescription(
+          'Welcome to the Birthday Bot! I announce server members\' birthdays and track upcoming celebrations.\n\n' +
+          '### 👤 Member Commands\n' +
+          '- **`/birthday set`**: Registers or updates your own birthday. It opens a simple form popup where you can input:\n' +
+          '  * **Month & Day** (required numbers, e.g. Month `12`, Day `25`)\n' +
+          '  * **Birth Year** (optional number, e.g. `2001`, or negative numbers for BCE like `-400`)\n' +
+          '  * **Preferred Name** (optional text, e.g. `Glorbus`, used instead of your username in announcements)\n' +
+          '- **`/birthday list`**: View a chronological list of upcoming birthdays in the server, with countdown timers.\n' +
+          '- **`/birthday remove`**: Permanently removes your birthday from the bot\'s database.\n\n' +
+          '### 🛠️ Moderator Commands (Requires "Manage Channels" permission)\n' +
+          '- **`/birthday set-user [user] [month] [day] [year] [name]`**: Set or override the birthday for another server member.\n' +
+          '- **`/birthday remove-user [user]`**: Delete the birthday entry for another server member.\n' +
+          '- **`/birthday channel [channel]`**: Select the text channel where daily birthday announcements will be sent.\n' +
+          '- **`/birthday test`**: Execute a dry-run check for today\'s date to verify announcements.\n' +
+          '- **`/birthday test [month] [day]`**: Simulate and test a specific date\'s birthday announcements.'
+        )
+        .setFooter({ text: 'Made with ❤️ to celebrate your special days!' })
+        .setTimestamp();
+
+      await interaction.reply({ embeds: [embed], ephemeral: true });
+    }
+
     else if (subcommand === 'remove') {
       const removed = db.removeBirthday(interaction.user.id);
       if (removed) updatePresence(interaction.client);

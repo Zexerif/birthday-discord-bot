@@ -68,7 +68,7 @@ async function announceBirthdays(client, forcedDate = null) {
     try {
       // Try to fetch user from the client to get the latest avatar/details
       const user = await client.users.fetch(bday.userId);
-      
+
       const userDisplayName = bday.name ? `<@${bday.userId}> (${bday.name})` : `<@${bday.userId}>`;
 
       // Calculate age if year is registered
@@ -102,7 +102,7 @@ async function announceBirthdays(client, forcedDate = null) {
       if (isAncient) {
         const bceYear = parseInt(bday.year, 10) < 0 ? `${Math.abs(parseInt(bday.year, 10))} BCE` : bday.year;
         greeting = `🏛️ **ALERT: ${userDisplayName} is turning ${age.toLocaleString()} years old today!** Born in ${bceYear}, they have witnessed the rise and fall of empires, survived countless plagues, and somehow still ended up in this Discord server. Please show some respect for our elders. 🦴⚰️`;
-      // Add special funny milestone text for ages 20, 30, 40, 50, etc.
+        // Add special funny milestone text for ages 20, 30, 40, 50, etc.
       } else if (isMilestone) {
         greeting = `🎉 **Oh wow, ${userDisplayName} is turning ${age} today!** Officially a certified **old fart**! 👴💨 Hope your joints don't creak too much while blowing out the candles! 🎂🍰`;
       }
@@ -198,7 +198,7 @@ function startScheduler(client) {
     announceBirthdays(client);
     updatePresence(client);
   });
-  
+
   console.log('[Scheduler] Birthday check scheduler loaded. Scheduled for 9:00 AM daily.');
 }
 

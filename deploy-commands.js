@@ -12,6 +12,11 @@ const commands = [
     )
     .addSubcommand(subcommand =>
       subcommand
+        .setName('help')
+        .setDescription('Get help on how to use the Birthday Bot.')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
         .setName('remove')
         .setDescription('Remove your birthday from the registry.')
     )
